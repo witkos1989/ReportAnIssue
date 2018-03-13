@@ -1,0 +1,148 @@
+﻿@model ReportAnIssue.Models.IndexViewModel
+@{
+    ViewBag.Title = "Twoje konto";
+}
+
+@if (TempData["Success"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+}
+
+@if (TempData["Fail"] != null)
+{
+    <p class="alert alert-warning" id="successMessage">@TempData["Fail"]</p>
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Zmień ustawienia</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt style="width: 300px;">Hasło: </dt>
+        <dd style="margin-left: 320px;">
+            [
+            @if (Model.HasPassword)
+            {
+                @Html.ActionLink("Zmień hasło", "ChangePassword")
+            }
+            else
+            {
+                @Html.ActionLink("Dodaj hasło", "SetPassword")
+            }
+            ]
+        </dd>
+        @if (User.IsInRole("Admin"))
+        {
+            <dt style="width: 300px;">Zarejestruj nowego użytkownika: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Zarejestruj", "Register", "Account")
+                ]
+            </dd>
+            <dt style="width: 300px;">Zresetuj hasło użytkownika: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Zresetuj", "ResetPassword", "Account", new { code = "reset" }, null)
+                ]
+            </dd>
+            <dt style="width: 300px;">Dodaj osoby do korespondecji: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Ustawienia", "AccountRolesList", "AccountRole", new { code = "reset" }, null)
+                ]
+            </dd>
+            <dt style="width: 300px;">Zarządzaj uprawnieniami: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Zarządzaj", "Create", "AccountRole")
+                ]
+            </dd>
+            <dt style="width: 300px;">Sprawdź uprawnienia: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Sprawdź", "Details", "AccountRole")
+                ]
+            </dd>
+            <dt style="width: 300px;">Zarządzaj uprawnieniami: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Zarządzaj", "RoleCreate", "Account")
+                ]
+            </dd>
+            <dt style="width: 300px;">Dodaj kategorie: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Dodaj", "Create", "Type")
+                ]
+            </dd>
+            <dt style="width: 300px;">Lista kategorii: </dt>
+            <dd style="margin-left: 320px;">
+                [
+                @Html.ActionLink("Lista", "Index", "Type")
+                ]
+            </dd>
+        }
+        @*<dt style = "width: 300px;">External Logins:</dt>
+            <dd style ="margin-left: 320px;">
+                @Model.Logins.Count [
+                @Html.ActionLink("Manage", "ManageLogins") ]
+            </dd>*@
+        @*
+            Phone Numbers can used as a second factor of verification in a two-factor authentication system.
+
+             See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
+
+             Uncomment the following block after you have set up two-factor authentication
+        *@
+        @*
+            <dt style = "width: 300px;">Phone Number:</dt>
+            <dd style ="margin-left: 320px;">
+                @(Model.PhoneNumber ?? "None")
+                @if (Model.PhoneNumber != null)
+                {
+                    <br />
+                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
+                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
+                    }
+                }
+                else
+                {
+                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
+                }
+            </dd>
+        *@
+        @*<dt style = "width: 300px;">Two-Factor Authentication:</dt>
+            <dd style ="margin-left: 320px;">
+                <p>
+                    There are no two-factor authentication providers configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                    for details on setting up this ASP.NET application to support two-factor authentication.
+                </p>*@
+        @*@if (Model.TwoFactor)
+            {
+                using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <text>Enabled
+                    <input type="submit" value="Disable" class="btn btn-link" />
+                    </text>
+                }
+            }
+            else
+            {
+                using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <text>Disabled
+                    <input type="submit" value="Enable" class="btn btn-link" />
+                    </text>
+                }
+            }*@
+        @*</dd>*@
+    </dl>
+</div>

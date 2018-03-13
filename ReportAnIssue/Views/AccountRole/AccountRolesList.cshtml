@@ -1,0 +1,30 @@
+﻿@model IEnumerable<ReportAnIssue.Models.Type>
+
+@if (TempData["Success"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+}
+
+@if (TempData["Fail"] != null)
+{
+    <p class="alert alert-warning" id="successMessage">@TempData["Fail"]</p>
+}
+
+<h1>Użytkownicy, którzy będą otrzymywać maila z danego typu usterki</h1>
+
+@foreach (var item in Model)
+{
+    <dt>@Html.DisplayFor(modelItem => item.Name) @Html.ActionLink("Dodaj", "Add", new { id = item.Id })</dt>
+    <ul>
+        @foreach (var user in item.Users)
+        {
+            using (Html.BeginForm("DeleteAccount", "AccountRole"))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("userId", user.Id)
+                @Html.Hidden("typeId", item.Id)
+                <li>@Html.DisplayFor(modelItem => user.Email) <input type="submit" value="Usuń" class="btn-link" /></li>
+            }
+        }
+    </ul>
+}

@@ -1,0 +1,40 @@
+﻿@model ReportAnIssue.ViewModels.IssueListViewModel
+@{
+    ViewBag.Title = "Usunięte usterki";
+}
+@if (User.IsInRole("Admin"))
+{
+    <div class="jumbotron">
+        <h1>Usterki usunięte</h1>
+    </div>
+
+    <div class="row">
+        <div>
+            <h2>Lista zakończonych usterek!</h2>
+            @foreach (var item in Model.Types)
+            {
+                if (Model.IssuesVM.Count(i => i.TypeId == Convert.ToInt16(item.Value)) != 0)
+                {
+                    <h4>@Html.DisplayFor(typeItem => item.Text)</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th style="width: 15%">Nr. inwentarzowy</th>
+                            <th style="width: 15%">Użytkownik</th>
+                            <th style="width: 30%">Tytuł</th>
+                            <th style="width: 15%">Data utworzenia</th>
+                        </tr>
+                        @foreach (var issue in Model.IssuesVM.Where(i => i.TypeId == Convert.ToInt16(item.Value)))
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => issue.InventoryNumber)</td>
+                                <td>@Html.DisplayFor(modelItem => issue.userName)</td>
+                                <td>@Html.DisplayFor(modelItem => issue.Title)</td>
+                                <td>@Html.DisplayFor(modelItem => issue.StartDate)</td>
+                            </tr>
+                        }
+                    </table>
+                }
+            }
+        </div>
+    </div>
+}

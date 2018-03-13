@@ -1,0 +1,49 @@
+﻿@model ReportAnIssue.ViewModels.AccountRolesViewModel
+
+@if (ViewBag.Message != null)
+{
+    <p class="alert alert-danger">@ViewBag.Message</p>
+}
+
+@if (ViewBag.Success != null)
+{
+    <p class="alert alert-success">@ViewBag.Success</p>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Dodaj osoby, które mają być powiadamiane o nowych usterkach z danej kategorii</h4>
+        <hr />
+        @if (User.IsInRole("Admin"))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.TypeString, "Typ usterki", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.TypeString, Model.Types)
+                    @Html.ValidationMessageFor(model => model.TypeString, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, "E-mail", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @Html.HiddenFor(model => model.Id)
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Zapisz" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Wróć", "Index", "Manage")
+</div>

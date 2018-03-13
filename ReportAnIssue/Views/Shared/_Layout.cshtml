@@ -1,0 +1,55 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link href="~/Content/Images/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link rel="icon" href="~/Content/Images/favicon.ico" type="image/ico" />
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @if (!User.Identity.OneTimePassword())
+                {
+                    @Html.ActionLink("System zgłoszeń", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                }
+            </div>
+            <div class="navbar-collapse collapse">
+                @if (User.Identity.IsAuthenticated && !User.Identity.OneTimePassword())
+                {
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Dodaj zgłoszenie", "Create", "Issue")</li>
+                        <li>@Html.ActionLink("Archiwum usterek", "IssueArchive", "Home")</li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li>@Html.ActionLink("Usterki usunięte", "DeletedIssues", "Home")</li>
+                        }
+                    </ul>
+                }
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; Centrum Naukowo Badawcze Ochrony Przeciwpożarowej w Józefowie @DateTime.Now.Year</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

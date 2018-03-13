@@ -1,0 +1,28 @@
+﻿@model IEnumerable<ReportAnIssue.Models.Type>
+
+<table class="table">
+    <tr>
+        <th>
+            Nazwa kategorii
+        </th>
+        <th>
+            Czy aktywna
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Active)
+        </td>
+        <td>
+            @Html.ActionLink("Edytuj", "Edit", new { id=item.Id })
+        </td>
+    </tr>
+}
+</table>
+@Html.ActionLink("Wróć", "Index", "Manage")

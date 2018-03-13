@@ -1,0 +1,24 @@
+﻿@model IEnumerable<ReportAnIssue.ViewModels.AccountRolesViewModel>
+
+<div>
+    <h4>Uprawnienia użytkowników</h4>
+    <hr />
+    @if (User.IsInRole("Admin"))
+    {
+        foreach (var item in Model)
+        {
+            <div>
+                @Html.DisplayFor(modelItem => item.Email)
+                <ul>
+                    @foreach (var role in item.RolesList)
+                    {
+                        <li>@Html.DisplayFor(roleItem => role)</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+    <div>
+        @Html.ActionLink("Wróć", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+    </div>
+</div>.

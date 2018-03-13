@@ -1,0 +1,162 @@
+﻿@model ReportAnIssue.ViewModels.IssueDetailsViewModel
+
+@{
+    ViewBag.Title = "Szczegóły usterki";
+}
+
+@if (TempData["Success"] != null)
+{
+    <p class="alert alert-success" id="successMessage">@TempData["Success"]</p>
+}
+@if (TempData["Fail"] != null)
+{
+    <p class="alert alert-warning" id="successMessage">@TempData["Fail"]</p>
+}
+
+<script>
+    function valueChanged() {
+        if ($('.endIssue').is(":checked"))
+            $(".rate").show();
+        else
+            $(".rate").hide();
+    }
+</script>
+
+<h2>Szczegóły usterki</h2>
+<hr />
+<div>
+    <dl class="dl-horizontal">
+        <dt>Tytuł: </dt>
+        <dd>@Html.DisplayFor(model => model.Issue.Title)</dd>
+
+        <dt>Numer inwentarzowy: </dt>
+        <dd>@Html.DisplayFor(model => model.Issue.InventoryNumber)</dd>
+
+        <dt>Typ usterki: </dt>
+        <dd>@Html.DisplayFor(model => model.Type.Name)</dd>
+
+        <dt>Opis: </dt>
+        <dd>@Html.DisplayFor(model => model.Issue.Description)</dd>
+
+        @if (Model.Issue.State == 2)
+        {
+            <dt>Data rozpoczęcia: </dt>
+            <dd>@Html.DisplayFor(model => model.Issue.StartDate)</dd>
+            <dt>Data zakończenia: </dt>
+            <dd>@Html.DisplayFor(model => model.Issue.EndDate)</dd>
+            <dt>Czas wykonania: </dt>
+            <dd>@Html.DisplayFor(model => model.TimeExpired)</dd>
+            <dt>Ocena: </dt>
+            <dd>@Html.DisplayFor(model => model.Issue.Rate)</dd>
+            <dt>Komentarz do oceny: </dt>
+            <dd>@Html.DisplayFor(model => model.Issue.RateComment)</dd>
+        }
+
+        @using (Html.BeginForm("DownloadAttachment", "Issue", FormMethod.Post, new { attachment = "model" }))
+        {
+            if (Model.Attachment != null)
+            {
+                @Html.HiddenFor(modelItem => Model.Issue.FileId)
+                @Html.HiddenFor(modelItem => Model.Id)
+                <dt>Załącznik: </dt>
+                <dd>@Html.DisplayFor(model => model.Attachment.FileName)</dd>
+                <dt></dt>
+                <dd><input type="submit" value="Pobierz" class="btn btn-default" /></dd>
+            }
+        }
+
+    </dl>
+</div>
+<div>
+    @if (Model.Issue.Comments.Count > 0)
+    {
+        <h5>Komentarze: </h5>
+        <table class="table table-striped" style="width: 50%;">
+            <tr>
+                <th>Użytkownik</th>
+                <th>Opis</th>
+                <th>Data</th>
+            </tr>
+            @foreach (var item in Model.Comments)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                    <td style="width: 45%;">@Html.DisplayFor(modelItem => item.Content)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Date)</td>
+                </tr>
+            }
+        </table>
+    }
+</div>
+@using (Html.BeginForm("AddComment", "Issue", FormMethod.Post, new { issueDetails = "model" }))
+{
+    if (Model.Issue.State == 0 || Model.Issue.State == 1)
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(modelItem => Model.Id)
+        <div>
+            <dl class="dl-horizontal">
+                <dt style="padding-top: 6px;">@Html.LabelFor(model => model.CommentContent, "Nowy komentarz:")</dt>
+                <dd>
+                    @*@Html.EditorFor(model => model.CommentContent, new { htmlAttributes = new { @class = "form-control" } })*@
+                    @Html.TextAreaFor(model => model.CommentContent, 6, 40, new { @class = "form-control form-textarea" })
+                    @Html.ValidationMessageFor(model => model.CommentContent, "", new { @class = "text-danger" })
+                </dd>
+                <dt></dt>
+                <dd><input type="submit" style="margin: 15px 0px;" value="Dodaj komentarz" class="btn btn-default" /></dd>
+            </dl>
+        </div>
+    }
+}
+
+@using (Html.BeginForm("RateIssue", "Issue", FormMethod.Post, new { issueDetails = "model" }))
+{
+    if (Model.UserId == Model.Issue.UserId)
+    {
+        if (Model.Issue.State == 0 || Model.Issue.State == 1)
+        {
+            <div class="form-group">
+                <input class="endIssue" id="end" type="checkbox" onchange="valueChanged()" />
+                <label for="end" style="font-weight: normal;">Zakończ usterkę</label>
+            </div>
+            <div class="rate form-horizontal" style="display: none;">
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(modelItem => Model.Id)
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CommentContent, "Oceń zgłoszenie:", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.DropDownListFor(model => model.Rate, Model.Rates, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Rate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CommentContent, "Komentarz do oceny:", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.CommentRate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CommentRate, "", new { @class = "text-danger" })
+                        <input type="submit" style="margin: 15px 0px;" value="Dodaj ocenę" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+
+@using (Html.BeginForm("IssueDone", "Issue", FormMethod.Post, new { issueDetails = "model" }))
+{
+    if (Model.Issue.State == 0 || Model.Issue.State == 1)
+    {
+        if (User.IsInRole("Admin") || User.IsInRole("ShowInformatics") || User.IsInRole("ShowBuilding") ||
+            User.IsInRole("ShowElectrics") || User.IsInRole("ShowHydraulics") || User.IsInRole("ShowOrdinal") ||
+            User.IsInRole("ShowPhones") || User.IsInRole("ShowResearch") || User.IsInRole("ShowOthers"))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(modelItem => Model.Id)
+            <input style="margin: 15px 0px;" type="submit" value="Usterka wykonana" class="btn btn-default" />
+        }
+    }
+}
+
+<p>
+    @Html.ActionLink("Wróć na główną stronę", "Index", "Home")
+</p>
